@@ -44,7 +44,9 @@ public:
     vector<int> board;
     // end position
     vector<int> goal;
+    // tracks how many nodes are expanded
     int numNodes;
+    // set of visited states
     set<vector<int>> nodeset;
     int findzero(vector<int> state)
     {
@@ -277,6 +279,7 @@ int main()
     cout << "Enter 1 for uniform cost, 2 for A* with misplaced tile, or 3 for A* with manhattan" << endl;
     int choice2;
     cin >> choice2;
+    // track execution time
     auto start = high_resolution_clock::now();
     switch (choice2)
     {
