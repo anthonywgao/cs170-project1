@@ -123,15 +123,67 @@ priority_queue<Node> uniform_cost(priority_queue<Node> nodes, vector<Node> expan
     }
     return q;
 }
+int misplaced(vector<int> v)
+{
+    int d = 0;
+    vector<int> goal = {1, 2, 3, 4, 5, 6, 7, 8, 0};
+    for (int i = 0; i < v.size(); ++i)
+    {
+        if (v.at(i) != 0 && v.at(i) != goal.at(i))
+        {
+            d++;
+        }
+    }
+    return d;
+}
+priority_queue<Node> a_star_misplaced(priority_queue<Node> nodes, vector<Node> expand)
+{
+    priority_queue<Node> q = nodes;
+    for (Node node : expand)
+    {
+        node.hn = misplaced(node.curboard);
+        node.fn = node.gn + node.hn;
+        q.push(node);
+    }
+    return q;
+}
+int manhattan(vector<int> v)
+{
+    int d = 0;
+    vector<int> goal = {1, 2, 3, 4, 5, 6, 7, 8, 0};
+    for (int i = 0; i < v.size(); ++i)
+    {
+        if (v.at(i) != 0 && v.at(i) != goal.at(i))
+        {
+            // diff in row + diff in column
+            d += abs(v.at(i) / 3 - i / 3) + abs(v.at(i) % 3 - i % 3);
+        }
+    }
+    return d;
+}
+priority_queue<Node> a_star_manhattan(priority_queue<Node> nodes, vector<Node> expand)
+{
+    priority_queue<Node> q = nodes;
+    for (Node node : expand)
+    {
+        node.hn = manhattan(node.curboard);
+        node.fn = node.gn + node.hn;
+        q.push(node);
+    }
+    return q;
+}
+// same search as in lecture
 void generalSearch(Problem prob, function<priority_queue<Node>(priority_queue<Node>, vector<Node>)> qfunc)
 {
     priority_queue<Node> nodes;
+    // initialize first node
     Node node0;
     node0.curboard = prob.board;
     node0.hn = 0;
     node0.gn = 0;
     node0.fn = 0;
     nodes.push(node0);
+    // max queue size
     int maxSize = 1;
     while (1)
     {
@@ -229,8 +281,10 @@ int main()
     switch (choice2)
     {
     case 2:
+        generalSearch(prob, &a_star_misplaced);
         break;
     case 3:
+        generalSearch(prob, &a_star_manhattan);
         break;
     default:
         generalSearch(prob, &uniform_cost);
